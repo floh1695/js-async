@@ -12,6 +12,7 @@
     "lodash": "^4.17.10",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "request-promise-json": "^1.0.4"
+    "request-promise-json": "^1.0.4",
+    "stampit": "^4.1.2"
   }
 }

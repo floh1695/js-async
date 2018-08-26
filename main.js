@@ -2,6 +2,7 @@
 
 const fp = require('lodash/fp');
 const http = require('request-promise-json');
+const stampit = require('stampit');
 
 const getAllPeople = fp.memoize(require('./getAllPeople'));
 const getAllSpeciesFromPeople = require('./getAllSpeciesFromPeople');
