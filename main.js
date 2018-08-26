@@ -12,9 +12,11 @@ const baseUrl = require('./baseUrl');
 
 const Api = stampit()
   .props({
+    //* String
     url: null,
   })
   .methods({
+    //* Api ~> () -> Promise response
     get: function () {
       return http
         .get(this.url);
@@ -32,6 +34,7 @@ const PeopleApi = stampit(Api)
       + `?page=${options.page}`;
   })
   .methods({
+    //* PeopleApi ~> Number -> PeopleApi
     page: function (pageNumber) {
       return PeopleApi({ 
         options: { 
@@ -46,6 +49,7 @@ const SwApi = stampit(Api)
     this.url = baseUrl;
   })
   .methods({
+    //* SwApi ~> () -> PeopleApi 
     people: function () {
       return PeopleApi();
     },
@@ -53,6 +57,7 @@ const SwApi = stampit(Api)
 
 
 print('js-async');
+print('--------');
 
 //* [.name] -> [String]
 const mapNameThenPrint = fp.flow(
