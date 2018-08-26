@@ -5,13 +5,20 @@ const http = require('request-promise-json');
 
 const getAllPeople = require('./getAllPeople');
 
-//* () -> Promise Species
+//* () -> Promise [Species]
 const getAllSpeciesFromPeople = () => getAllPeople()
-  .then(fp.map('species'))
-  .then(fp.reduce(fp.concat)([]))
-  .then(fp.uniq)
-  .then(fp.map(http.get))
-  .then(promises => Promise.all(promises));
+  .then(fp.flow(
+    //* People -> [[Url Species]]
+    fp.map('species'),
+    //* [[Url Species]] -> [Url Species]
+    fp.flatten,
+    //* [Url Species] -> [Url Species]
+    fp.uniq,
+    //* [Url Species] -> [Promise Species]
+    fp.map(http.get),
+    //* [Promise Species] -> Promise [Species]
+    promises => Promise.all(promises),
+  ));
 
 module.exports = getAllSpeciesFromPeople;
 
