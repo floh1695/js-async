@@ -8,6 +8,50 @@ const getAllPeople = fp.memoize(require('./getAllPeople'));
 const getAllSpeciesFromPeople = require('./getAllSpeciesFromPeople');
 const print = require('./print');
 
+const baseUrl = require('./baseUrl');
+
+const Api = stampit()
+  .props({
+    url: null,
+  })
+  .methods({
+    get: function () {
+      return http
+        .get(this.url);
+    },
+  });
+
+const PeopleApi = stampit(Api)
+  .init(function ({
+    options = {
+      page: 1.
+    },
+  }) {
+    this.url = baseUrl 
+      + '/people'
+      + `?page=${options.page}`;
+  })
+  .methods({
+    page: function (pageNumber) {
+      return PeopleApi({ 
+        options: { 
+          page: pageNumber, 
+        }, 
+      });
+    },
+  });
+
+const SwApi = stampit(Api)
+  .init(function ({}) {
+    this.url = baseUrl;
+  })
+  .methods({
+    people: function () {
+      return PeopleApi();
+    },
+  });
+
+
 print('js-async');
 
 //* [.name] -> [String]
@@ -16,10 +60,17 @@ const mapNameThenPrint = fp.flow(
   fp.map(print),
 );
 
-getAllSpeciesFromPeople()
-  .then(mapNameThenPrint);
+//getAllSpeciesFromPeople()
+//  .then(mapNameThenPrint);
 
-fp.times(() => getAllPeople()
-  .then(mapNameThenPrint))
-  (5);
+//fp.times(() => getAllPeople()
+//  .then(mapNameThenPrint))
+//  (5);
+
+SwApi()
+  .people()
+  .page(2)
+  .get()
+  .then(page => page.results)
+  .then(mapNameThenPrint);
 
