@@ -17,23 +17,31 @@ const getFirstPage = () => getPageResults(1)
   .then(fp.map('name'))
   .then(fp.each(console.log));
 
-const getAllPages = () => { 
-  const getPageWork = pageNumber => getPage(pageNumber)
-    .then(page => {
-      fp(page.results)
-        .map('name')
-        .each(console.log);
-    
-      const isNextPage = !fp.isNil(page.next);
-      return isNextPage
-        ? getPageWork(pageNumber + 1)
-        : null;
+const getAllPeople = () => {
+  const getDataFromPage = page => ({
+      people: page.results,
+      isNextPage: !fp.isNil(page.next),
     });
+ 
+  const updatePeople = people => data => fp.assign(data)
+    ({
+      people: fp.concat(people)(data.people),
+    });
+
+  const tail = recurse => data => data.isNextPage
+    ? recurse(data.people)
+    : data.people;
+
+  const inner = pageNumber => people => getPage(pageNumber)
+    .then(getDataFromPage)
+    .then(updatePeople(people))
+    .then(tail(inner(pageNumber + 1)))
   
-  return getPageWork(1);
+  return inner(1)([]);
 };
 
 
-getAllPages();
-
+getAllPeople()
+  .then(fp.map('name'))
+  .then(fp.each(console.log));
 
