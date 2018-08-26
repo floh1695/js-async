@@ -7,15 +7,8 @@ console.log('js-async');
 
 const baseUrl = 'https://swapi.co/api';
 
-const getPage = page => http
+const getPeopleByPage = page => http
   .get(`${baseUrl}/people?page=${page}`);
-
-const getPageResults = page => getPage(page)
-  .then(response => response.results);
-
-const getFirstPage = () => getPageResults(1)
-  .then(fp.map('name'))
-  .then(fp.each(console.log));
 
 const getAllPeople = () => {
   const getDataFromPage = page => ({
@@ -32,16 +25,32 @@ const getAllPeople = () => {
     ? recurse(data.people)
     : data.people;
 
-  const inner = pageNumber => people => getPage(pageNumber)
+  const inner = pageNumber => people => getPeopleByPage(pageNumber)
     .then(getDataFromPage)
     .then(updatePeople(people))
-    .then(tail(inner(pageNumber + 1)))
+    .then(tail(inner(pageNumber + 1)));
   
   return inner(1)([]);
 };
 
+const getAllHairColors = () => getAllPeople()
+  .then(fp.map('hair_color'))
+  .then(fp.groupBy(fp.identity))
+  .then(fp.mapValues('length'));
 
-getAllPeople()
+const getAllSpeciesFromPeople = () => getAllPeople()
+  .then(fp.map('species'))
+  .then(fp.reduce(fp.concat)([]))
+  .then(fp.uniq)
+  .then(fp.map(http.get))
+  .then(promises => Promise.all(promises));
+
+const print = x => {
+  console.log(x);
+  return x;
+};
+
+getAllSpeciesFromPeople()
   .then(fp.map('name'))
-  .then(fp.each(console.log));
+  .then(fp.each(print));
 
