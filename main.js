@@ -65,17 +65,17 @@ const mapNameThenPrint = fp.flow(
   fp.map(print),
 );
 
-//getAllSpeciesFromPeople()
-//  .then(mapNameThenPrint);
+getAllSpeciesFromPeople()
+  .then(mapNameThenPrint);
 
 //fp.times(() => getAllPeople()
 //  .then(mapNameThenPrint))
 //  (5);
 
-SwApi()
-  .people()
-  .page(2)
-  .get()
-  .then(page => page.results)
-  .then(mapNameThenPrint);
+//SwApi()
+//  .people()
+//  .page(2)
+//  .get()
+//  .then(page => page.results)
+//  .then(mapNameThenPrint);
 
